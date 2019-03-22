@@ -8,7 +8,7 @@ sqs = boto3.resource('sqs', region_name='us-east-1')
 sns = boto3.client('sns')
 class ClosePipeline:
 
-    def __publish_message_to_sns(self, message):
+    def __publish_message_to_sns(self,message):
         response = sns.publish(
             TargetArn=os.environ['BATCH_NOTIFICATION_SNS'],
             Message=json.dumps({'default': json.dumps(message)}),
@@ -43,10 +43,6 @@ class ClosePipeline:
                     persistenceQueue = os.environ['SQS_PERSIST_HISTORICAL_ARN']
 
                 self.put_message_sqs(batchId,persistenceQueue)
-                manifestQueue = os.environ['SQS_MANIFEST_ORCHESTRATION_QUEUE_NAME']
-                if (is_historical):
-                    manifestQueue = os.environ['SQS_MANIFEST_ORCHESTRATION_HIS_QUEUE_NAME']
-                queue = sqs.get_queue_by_name(QueueName=manifestQueue)
                 txt=json.dumps(event[0])
                 if json.loads(txt).get("queueUrl") is not None:
                     message = sqs.Message(queueUrl,receiptHandle)
