@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/usdot-jpo-sdc/sdc-dot-waze-close-manifest-pipeline.svg?branch=master)](https://travis-ci.com/usdot-jpo-sdc/sdc-dot-waze-close-manifest-pipeline)
 # sdc-dot-waze-close-manifest-pipeline
 This lambda function is responsible for deleting the message from the queue and send a notification to the SNS topic for the completion of the manifest generation.
 
