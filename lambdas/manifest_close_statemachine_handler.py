@@ -5,10 +5,10 @@ from common.logger_utility import *
 from common.constants import *
 
 sqs = boto3.resource('sqs', region_name='us-east-1')
-sns = boto3.client('sns')
+sns = boto3.client('sns', region_name='us-east-1')
 class ClosePipeline:
 
-    def __publish_message_to_sns(self,message):
+    def publish_message_to_sns(self,message):
         response = sns.publish(
             TargetArn=os.environ['BATCH_NOTIFICATION_SNS'],
             Message=json.dumps({'default': json.dumps(message)}),
@@ -29,7 +29,8 @@ class ClosePipeline:
                 "Unable to put message to persist sqs for batch id - {} , sqs - {}".format(batch_id, sqs_persist))
             raise e
 
-    def __delete_sqs_message(self,event, context):
+    def delete_sqs_message(self,event, context):
+        batchId = ""
         try:
             if "queueUrl" in event[0]:
 
@@ -48,10 +49,10 @@ class ClosePipeline:
                     message = sqs.Message(queueUrl,receiptHandle)
                     message.delete()
                     LoggerUtility.logInfo("Message deleted from sqs for batchId {}".format(batchId))
-                    self.__publish_message_to_sns({"BatchId": batchId, "Status": "Manifest generation completed"})
+                    self.publish_message_to_sns({"BatchId": batchId, "Status": "Manifest generation completed"})
         except Exception as e:
             LoggerUtility.logError("Unable to delete sqs message for batchId {}".format(batchId))
             raise e
     
     def close_pipeline(self, event, context):
-        self.__delete_sqs_message(event, context)
+        self.   delete_sqs_message(event, context)
