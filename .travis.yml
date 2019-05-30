@@ -5,11 +5,10 @@ install:
     - pip install boto3
     - pip install utils
     - pip install moto
+    - pip install coverage
 addons:
     sonarcloud:
-        organization: "usdot-jpo-sdc"
-        token:
-            secure: "JHYv32IlcvKhaerL7cecwDPsu2T4Im4qtAxG759ma4arGMTeNGu5I56Ix4O8Rzmi2Om6xd8aesVqBvFQbmasvM5lNYmE+1XMTv0UvsyljRXsQ8vdh+uRj0Ysmk3ENRGSHlx9TUlEn0fdrh8kVRhJOHnMTGRQ3R9YIAbyID+7XktLrGdcIL7l862dtUw/XC/98zK5rd9kwcJaN5s8xkwazTjIVLmQeHAvvBLhp7SUoX/FNBdjDOojnHt6GZkCaw2YOHFw3wGXbh9EKouJQ/eH8d+QQDyEzdU/AjslJNbmzAdNm5ys2u9JR+tIDXxkK/+2jgkEjYPy0CT7AXhtdGZcDbA3H8FnIfZT8WlnXpyqhpbMkBeNTTPFgF599f50C6gIHmoEVQGuH8CC+s5fhe3DMKj1rykqfDpFGNtgEV9ST9FBiDVwi5uRAmMuIU+g8tyo3yvEcS7lYEGrvJdPs89UdkPyoyaPfvDYF10wOqFnXj+HVBZELpwZSET40lBKO75ECFFr8o1MacXjKDTgEbrHRy4GiOJ9RLC7Vp58L0k4KVd1gf1oq7PKONlp8RraJ3NqSjRehCoNrZaIGK3LwWUciXFyAxnuTH4PBxLfdXvl/xEvvdAQoHJPXifVggFLXuliwPjAWrDbBruKRnpZmfR8soU3bqoTVuk/Hv/VLb6lMyE="
+        organization: "usdot-jpo-sdc-projects"
 branches:
     only:
         - master
