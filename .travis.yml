@@ -5,14 +5,15 @@ install:
     - pip install boto3
     - pip install utils
     - pip install moto
-    - pip install coverage
-addons:
-    sonarcloud:
-        organization: "usdot-jpo-sdc-projects"
+    - pip install psycopg2
 branches:
     only:
         - master
         - develop
+        
+addons:
+    sonarcloud:
+        organization: "usdot-jpo-sdc-projects"
 script:
     - coverage erase
     - coverage run -m pytest tests/
