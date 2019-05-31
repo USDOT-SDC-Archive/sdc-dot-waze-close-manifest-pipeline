@@ -15,4 +15,6 @@ addons:
     sonarcloud:
         organization: "usdot-jpo-sdc-projects"
 script: 
-    - sonar-scanner
+    - coverage erase
+    - coverage run -m pytest .\persistence_close_statemachine_handler_main.py
+    - coverage xml -i
