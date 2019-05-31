@@ -19,3 +19,4 @@ addons:
         secure:$SONAR_TOKEN
 script: 
     - coverage erase
+    - sonar-scanner
