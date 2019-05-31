@@ -5,7 +5,6 @@
 This lambda function is responsible for deleting the message from the queue and send a notification to the SNS topic for the completion of the manifest generation.
 
 <a name="toc"/>
-
 ## Table of Contents
 
 [I. Release Notes](#release-notes)
