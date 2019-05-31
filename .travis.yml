@@ -6,13 +6,16 @@ install:
     - pip install utils
     - pip install moto
     - pip install psycopg2
+    - pip install coverage
 branches:
     only:
         - master
         - develop
-        
 addons:
     sonarcloud:
         organization: "usdot-jpo-sdc-projects"
-script:
-    - sonar-scanner
+    token:
+        secure:$SONAR_TOKEN
+script: 
+    - coverage erase
+- sonar-scanner
