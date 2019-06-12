@@ -45,19 +45,18 @@ class ClosePipeline:
         """
         Moves a message to the persistence queue, then deletes it from the previous queue via Amazon's Simple Queue
         Service.
-        :param event: a list with a dictionary that contains information on a batch(?) # might be nice to put down the
-            structure of the dictionary
-            - Is the event a single item list?
-        :param context: idk but it's not used
+        :param event: a list with a dictionary that contains information on a batch
+        :param context:
         :return:
         """
-        batchId = ""  # are batch ids strings or ints
+        batchId = ""
         try:
             if "queueUrl" in event[0]:
                 queueUrl = event[0]["queueUrl"]
                 receiptHandle = event[0]["receiptHandle"]
                 batchId = event[0]["batch_id"]
                 is_historical = event[0]["is_historical"] == "true"
+
                 persistenceQueue = os.environ['SQS_PERSIST_ARN']
                 if is_historical:
                     persistenceQueue = os.environ['SQS_PERSIST_HISTORICAL_ARN']
@@ -79,7 +78,7 @@ class ClosePipeline:
     def close_pipeline(self, event, context):
         """
         Executes delete_sqs_message
-        :param event:
+        :param event: a list with a dictionary that contains information on a batch
         :param context:
         :return:
         """

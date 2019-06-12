@@ -35,6 +35,7 @@ def test_publish_message_to_sns():
     close_pipeline_obj.publish_message_to_sns(message)
     assert True
 
+
 @mock_sqs
 def test_put_message_sqs():
     sqs = boto3.client('sqs', region_name='us-east-1')
@@ -50,6 +51,7 @@ def test_put_message_sqs():
     close_pipeline_obj.put_message_sqs(generated_batch_id, queue_name)
     assert True
 
+
 @mock_sqs
 def test_put_message_sqs_exception():
     with pytest.raises(Exception):
@@ -62,6 +64,7 @@ def test_put_message_sqs_exception():
         generated_batch_id = str(int(time.time()))
         close_pipeline_obj = ClosePipeline()
         close_pipeline_obj.put_message_sqs(generated_batch_id, "")
+
 
 @mock_sqs
 def test_delete_sqs_message_exception(event):
@@ -146,6 +149,4 @@ def test_delete_sqs_message_assign_historical_persistence_queue(event):
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
                                                                os.environ['SQS_PERSIST_HISTORICAL_ARN'])
-
-    time.sleep(120)
 
