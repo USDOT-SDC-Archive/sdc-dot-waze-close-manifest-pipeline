@@ -20,5 +20,5 @@ addons:
         secure:$SONAR_TOKEN
 script: 
     - coverage erase
-    - coverage run -m pytest tests/
+    - coverage run -m pytest ./tests/
     - sonar-scanner
