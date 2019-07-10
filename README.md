@@ -1,11 +1,10 @@
-[![Build Status](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline.svg?branch=master)](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline)
+[![Build Status](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline.svg?branch=develop)](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeliner)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline&metric=coverage)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline&metric=alert_status)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline)
 # sdc-dot-waze-close-manifest-pipeline
 This lambda function is responsible for deleting the message from the queue and send a notification to the SNS topic for the completion of the manifest generation.
 
 <a name="toc"/>
-
 ## Table of Contents
 
 [I. Release Notes](#release-notes)
