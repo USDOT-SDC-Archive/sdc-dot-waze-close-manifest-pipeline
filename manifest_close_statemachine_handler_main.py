@@ -1,6 +1,7 @@
-from lambdas.persistence_close_statemachine_handler import *
+from lambdas.manifest_close_statemachine_handler import *
 from common.logger_utility import *
 from common.constants import *
+
 
 def lambda_handler(event, context):
     LoggerUtility.setLevel()
