@@ -6,5 +6,5 @@ from common.constants import *
 def lambda_handler(event, context):
     LoggerUtility.setLevel()
     close_pipeline_handle_event = ClosePipeline()
-    close_pipeline_handle_event.close_pipeline(event, context)
+    close_pipeline_handle_event.close_pipeline(event)
     return event
