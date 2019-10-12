@@ -1,11 +1,14 @@
-from moto import mock_sns, mock_sqs, mock_events
-import sys
 import os
+import sys
 import time
-import pytest
-import boto3
 from unittest import mock
+
+import boto3
+import pytest
+from moto import mock_sns, mock_sqs, mock_events
+
 from lambdas.manifest_close_statemachine_handler import ClosePipeline
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
@@ -56,11 +59,10 @@ def test_put_message_sqs():
 def test_put_message_sqs_exception():
     with pytest.raises(Exception):
         sqs = boto3.client('sqs', region_name='us-east-1')
-        response = sqs.create_queue(QueueName='dev-dot-sdc-waze-data-persistence-orchestration',
-                                    Attributes={'FifoQueue': "false", 'DelaySeconds': "5",
-                                                'MaximumMessageSize': "262144", 'MessageRetentionPeriod': "1209600",
-                                                'VisibilityTimeout': "960"})
-        queue_url = response['QueueUrl']
+        sqs.create_queue(QueueName='dev-dot-sdc-waze-data-persistence-orchestration',
+                         Attributes={'FifoQueue': "false", 'DelaySeconds': "5",
+                                     'MaximumMessageSize': "262144", 'MessageRetentionPeriod': "1209600",
+                                     'VisibilityTimeout': "960"})
         generated_batch_id = str(int(time.time()))
         close_pipeline_obj = ClosePipeline()
         close_pipeline_obj.put_message_sqs(generated_batch_id, "")
@@ -149,4 +151,3 @@ def test_delete_sqs_message_assign_historical_persistence_queue(event):
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
                                                                os.environ['SQS_PERSIST_HISTORICAL_ARN'])
-

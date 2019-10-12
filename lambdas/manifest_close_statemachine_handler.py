@@ -1,8 +1,7 @@
-import boto3
 import json
 import os
-from common.logger_utility import *
-from common.constants import *
+import boto3
+from common.logger_utility import LoggerUtility
 
 sqs = boto3.resource('sqs', region_name='us-east-1')
 sns = boto3.client('sns', region_name='us-east-1')
@@ -34,10 +33,10 @@ class ClosePipeline:
                 'BatchId': batch_id
             }))
 
-            LoggerUtility.logInfo(
+            LoggerUtility.log_info(
                 "Successfully put message to persist sqs for batch id - {}, response - {}".format(batch_id, response))
         except Exception as e:
-            LoggerUtility.logError(
+            LoggerUtility.log_error(
                 "Unable to put message to persist sqs for batch id - {} , sqs - {}".format(batch_id, sqs_persist))
             raise e
 
@@ -46,7 +45,6 @@ class ClosePipeline:
         Moves a message to the persistence queue, then deletes it from the previous queue via Amazon's Simple Queue
         Service.
         :param event: a list with a dictionary that contains information on a batch
-        :param context:
         :return:
         """
         batch_id = ""
@@ -69,12 +67,12 @@ class ClosePipeline:
                 if json.loads(txt).get("queueUrl") is not None:
                     message = sqs.Message(queue_url, receipt_handle)
                     message.delete()
-                    LoggerUtility.logInfo("Message deleted from sqs for batchId {}".format(batch_id))
+                    LoggerUtility.log_info("Message deleted from sqs for batchId {}".format(batch_id))
                     self.publish_message_to_sns({"BatchId": batch_id, "Status": "Manifest generation completed"})
         except Exception as e:
-            LoggerUtility.logError("Unable to delete sqs message for batchId {}".format(batch_id))
+            LoggerUtility.log_error("Unable to delete sqs message for batchId {}".format(batch_id))
             raise e
-    
+
     def close_pipeline(self, event):
         """
         Executes delete_sqs_message
