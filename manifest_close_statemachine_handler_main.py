@@ -1,6 +1,5 @@
-from lambdas.manifest_close_statemachine_handler import *
-from common.logger_utility import *
-from common.constants import *
+from common.logger_utility import LoggerUtility
+from lambdas.manifest_close_statemachine_handler import ClosePipeline
 
 
 def lambda_handler(event, context):
