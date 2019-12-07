@@ -1,6 +1,8 @@
 import json
 import os
+
 import boto3
+
 from common.logger_utility import LoggerUtility
 
 sqs = boto3.resource('sqs', region_name='us-east-1')
