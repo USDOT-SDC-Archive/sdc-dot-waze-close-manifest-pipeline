@@ -11,6 +11,8 @@ from lambdas.manifest_close_statemachine_handler import ClosePipeline
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
+os.environ['SQS_PERSIST_HISTORICAL_ARN'] = "os_environ_SQS_PERSIST_HISTORICAL_ARN"
+
 
 @pytest.fixture
 def event():
@@ -115,7 +117,6 @@ def test_delete_sqs_message_assign_persistence_queue(event):
     close_pipeline_obj = ClosePipeline()
     close_pipeline_obj.put_message_sqs = mock.MagicMock()
     close_pipeline_obj.publish_message_to_sns = mock.MagicMock()
-    os.environ['SQS_PERSIST_HISTORICAL_ARN'] = "os_environ_SQS_PERSIST_HISTORICAL_ARN"
 
     # delete_sqs_message
     close_pipeline_obj.delete_sqs_message(queue_events, None)
@@ -146,7 +147,7 @@ def test_delete_sqs_message_assign_historical_persistence_queue(event):
     close_pipeline_obj.put_message_sqs = mock.MagicMock()
 
     # delete_sqs_message
-    close_pipeline_obj.delete_sqs_message(queue_events)
+    close_pipeline_obj.delete_sqs_message(queue_events, None)
 
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
