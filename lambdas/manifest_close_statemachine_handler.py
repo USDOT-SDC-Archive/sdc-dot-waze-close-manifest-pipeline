@@ -42,13 +42,15 @@ class ClosePipeline:
                 "Unable to put message to persist sqs for batch id - {} , sqs - {}".format(batch_id, sqs_persist))
             raise e
 
-    def delete_sqs_message(self, event):
+    def delete_sqs_message(self, event, context):
         """
         Moves a message to the persistence queue, then deletes it from the previous queue via Amazon's Simple Queue
         Service.
         :param event: a list with a dictionary that contains information on a batch
+        :param context: not used.  Logging it
         :return:
         """
+        LoggerUtility.log_info("context: {}".format(context))
         batch_id = ""
         try:
             if "queueUrl" in event[0]:
@@ -75,10 +77,11 @@ class ClosePipeline:
             LoggerUtility.log_error("Unable to delete sqs message for batchId {}".format(batch_id))
             raise e
 
-    def close_pipeline(self, event):
+    def close_pipeline(self, event, context):
         """
         Executes delete_sqs_message
         :param event: a list with a dictionary that contains information on a batch
+        :param context: not used.  Just passed to
         :return:
         """
-        self.delete_sqs_message(event)
+        self.delete_sqs_message(event, context)

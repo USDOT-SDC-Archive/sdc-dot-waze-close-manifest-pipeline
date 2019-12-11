@@ -87,14 +87,14 @@ def test_delete_sqs_message_exception(event):
 
         # delete_sqs_message
         close_pipeline_obj = ClosePipeline()
-        close_pipeline_obj.delete_sqs_message(queue_events)
+        close_pipeline_obj.delete_sqs_message(queue_events, None)
 
 
 @mock_events
 def test_close_pipeline():
     with pytest.raises(Exception):
         close_pipeline_obj = ClosePipeline()
-        assert close_pipeline_obj.close_pipeline(None) is None
+        assert close_pipeline_obj.close_pipeline(None, None) is None
 
 
 @mock_sqs
@@ -118,7 +118,7 @@ def test_delete_sqs_message_assign_persistence_queue(event):
     os.environ['SQS_PERSIST_HISTORICAL_ARN'] = "os_environ_SQS_PERSIST_HISTORICAL_ARN"
 
     # delete_sqs_message
-    close_pipeline_obj.delete_sqs_message(queue_events)
+    close_pipeline_obj.delete_sqs_message(queue_events, None)
 
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
