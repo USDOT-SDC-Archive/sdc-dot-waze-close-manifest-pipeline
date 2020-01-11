@@ -5,18 +5,19 @@ import boto3
 
 from common.logger_utility import LoggerUtility
 
-sqs = boto3.resource('sqs', region_name='us-east-1')
-sns = boto3.client('sns', region_name='us-east-1')
-
 
 class ClosePipeline:
+
+    sqs = boto3.resource('sqs', region_name='us-east-1')
+    sns = boto3.client('sns', region_name='us-east-1')
+    LoggerUtility.log_info("Test test 123")
 
     def publish_message_to_sns(self, message):
         """
         Publishes a message to Amazon's Simple Notification Service
         :param message: dict
         """
-        sns.publish(
+        self.sns.publish(
             TargetArn=os.environ['BATCH_NOTIFICATION_SNS'],
             Message=json.dumps({'default': json.dumps(message)}),
             MessageStructure='json'
@@ -30,7 +31,7 @@ class ClosePipeline:
         :return:
         """
         try:
-            queue = sqs.get_queue_by_name(QueueName=sqs_persist)
+            queue = self.sqs.get_queue_by_name(QueueName=sqs_persist)
             response = queue.send_message(MessageBody=json.dumps({
                 'BatchId': batch_id
             }))
@@ -69,7 +70,7 @@ class ClosePipeline:
 
                 # delete message from the previous queue.
                 if json.loads(txt).get("queueUrl") is not None:
-                    message = sqs.Message(queue_url, receipt_handle)
+                    message = self.sqs.Message(queue_url, receipt_handle)
                     message.delete()
                     LoggerUtility.log_info("Message deleted from sqs for batchId {}".format(batch_id))
                     self.publish_message_to_sns({"BatchId": batch_id, "Status": "Manifest generation completed"})
