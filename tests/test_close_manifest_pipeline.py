@@ -28,9 +28,11 @@ def event():
 
 class MockMessage:
     def __init__(self, *args, **kwargs):
+        """left empty because mock method"""
         pass
 
     def delete(self):
+        """left empty because mock method"""
         pass
 
 
@@ -45,9 +47,11 @@ class MockSQS:
 
 class MockQueue:
     def __init__(*args, **kwargs):
+        """left empty because mock method"""
         pass
 
     def send_message(self, *args, **kwargs):
+        """left empty because mock method"""
         pass
 
 
