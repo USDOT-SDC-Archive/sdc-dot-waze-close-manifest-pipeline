@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline.svg?branch=develop)](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeliner)
+[![Build Status](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline.svg?branch=develop)](https://travis-ci.org/usdot-jpo-sdc-projects/sdc-dot-waze-close-manifest-pipeline)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline&metric=coverage)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline&metric=alert_status)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc-projects_sdc-dot-waze-close-manifest-pipeline)
 # sdc-dot-waze-close-manifest-pipeline

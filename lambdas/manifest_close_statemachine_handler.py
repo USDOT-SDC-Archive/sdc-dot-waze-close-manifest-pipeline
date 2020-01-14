@@ -5,18 +5,19 @@ import boto3
 
 from common.logger_utility import LoggerUtility
 
-sqs = boto3.resource('sqs', region_name='us-east-1')
-sns = boto3.client('sns', region_name='us-east-1')
-
 
 class ClosePipeline:
+
+    sqs = boto3.resource('sqs', region_name='us-east-1')
+    sns = boto3.client('sns', region_name='us-east-1')
+    LoggerUtility.log_info("Test test 123")
 
     def publish_message_to_sns(self, message):
         """
         Publishes a message to Amazon's Simple Notification Service
         :param message: dict
         """
-        sns.publish(
+        self.sns.publish(
             TargetArn=os.environ['BATCH_NOTIFICATION_SNS'],
             Message=json.dumps({'default': json.dumps(message)}),
             MessageStructure='json'
@@ -30,7 +31,7 @@ class ClosePipeline:
         :return:
         """
         try:
-            queue = sqs.get_queue_by_name(QueueName=sqs_persist)
+            queue = self.sqs.get_queue_by_name(QueueName=sqs_persist)
             response = queue.send_message(MessageBody=json.dumps({
                 'BatchId': batch_id
             }))
@@ -42,13 +43,15 @@ class ClosePipeline:
                 "Unable to put message to persist sqs for batch id - {} , sqs - {}".format(batch_id, sqs_persist))
             raise e
 
-    def delete_sqs_message(self, event):
+    def delete_sqs_message(self, event, context):
         """
         Moves a message to the persistence queue, then deletes it from the previous queue via Amazon's Simple Queue
         Service.
         :param event: a list with a dictionary that contains information on a batch
+        :param context: not used.  Logging it
         :return:
         """
+        LoggerUtility.log_info("context: {}".format(context))
         batch_id = ""
         try:
             if "queueUrl" in event[0]:
@@ -67,7 +70,7 @@ class ClosePipeline:
 
                 # delete message from the previous queue.
                 if json.loads(txt).get("queueUrl") is not None:
-                    message = sqs.Message(queue_url, receipt_handle)
+                    message = self.sqs.Message(queue_url, receipt_handle)
                     message.delete()
                     LoggerUtility.log_info("Message deleted from sqs for batchId {}".format(batch_id))
                     self.publish_message_to_sns({"BatchId": batch_id, "Status": "Manifest generation completed"})
@@ -75,10 +78,11 @@ class ClosePipeline:
             LoggerUtility.log_error("Unable to delete sqs message for batchId {}".format(batch_id))
             raise e
 
-    def close_pipeline(self, event):
+    def close_pipeline(self, event, context):
         """
         Executes delete_sqs_message
         :param event: a list with a dictionary that contains information on a batch
+        :param context: not used.  Just passed to
         :return:
         """
-        self.delete_sqs_message(event)
+        self.delete_sqs_message(event, context)

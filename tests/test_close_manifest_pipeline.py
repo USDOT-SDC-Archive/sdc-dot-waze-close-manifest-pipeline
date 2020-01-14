@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -11,6 +12,8 @@ from lambdas.manifest_close_statemachine_handler import ClosePipeline
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
+os.environ['SQS_PERSIST_HISTORICAL_ARN'] = "os_environ_SQS_PERSIST_HISTORICAL_ARN"
+
 
 @pytest.fixture
 def event():
@@ -21,6 +24,35 @@ def event():
         "is_historical": "false"
     }]
     yield event
+
+
+class MockMessage:
+    def __init__(self, *args, **kwargs):
+        """left empty because mock method"""
+        pass
+
+    def delete(self):
+        """left empty because mock method"""
+        pass
+
+
+class MockSQS:
+
+    def Message(self, *args, **kwargs):
+        return MockMessage(*args, **kwargs)
+
+    def get_queue_by_name(self, *args, **kwargs):
+        return MockQueue()
+
+
+class MockQueue:
+    def __init__(*args, **kwargs):
+        """left empty because mock method"""
+        pass
+
+    def send_message(self, *args, **kwargs):
+        """left empty because mock method"""
+        pass
 
 
 @mock_sns
@@ -35,8 +67,13 @@ def test_publish_message_to_sns():
     response = sns.create_topic(Name=topic_name)
     os.environ["BATCH_NOTIFICATION_SNS"] = response['TopicArn']
     close_pipeline_obj = ClosePipeline()
+    close_pipeline_obj.sns.publish = mock.MagicMock()
     close_pipeline_obj.publish_message_to_sns(message)
-    assert True
+    close_pipeline_obj.sns.publish.assert_called_with(
+        TargetArn=os.environ['BATCH_NOTIFICATION_SNS'],
+        Message=json.dumps({'default': json.dumps(message)}),
+        MessageStructure='json'
+    )
 
 
 @mock_sqs
@@ -51,8 +88,8 @@ def test_put_message_sqs():
     queue_name = queue_url[queue_url.rfind('/') + 1: len(queue_url)]
     generated_batch_id = str(int(time.time()))
     close_pipeline_obj = ClosePipeline()
+    close_pipeline_obj.sqs = MockSQS()
     close_pipeline_obj.put_message_sqs(generated_batch_id, queue_name)
-    assert True
 
 
 @mock_sqs
@@ -65,36 +102,16 @@ def test_put_message_sqs_exception():
                                      'VisibilityTimeout': "960"})
         generated_batch_id = str(int(time.time()))
         close_pipeline_obj = ClosePipeline()
+
+        # close_pipeline_obj.sqs = MockSQS()
         close_pipeline_obj.put_message_sqs(generated_batch_id, "")
-
-
-@mock_sqs
-def test_delete_sqs_message_exception(event):
-    with pytest.raises(Exception):
-        sqs = boto3.client('sqs', region_name='us-east-1')
-
-        # configure queue_events
-        response = sqs.create_queue(
-            QueueName='dev-dot-sdc-curated-batches.fifo',
-            Attributes={'FifoQueue': "true", 'DelaySeconds': "60",
-                        'MaximumMessageSize': "262144", 'MessageRetentionPeriod': "1209600",
-                        'VisibilityTimeoust': "960", 'ContentBasedDeduplication': "true"}
-        )
-        queue_url = response['QueueUrl']
-        queue_events = event
-        queue_events[0]["queueUrl"] = queue_url
-        print(queue_events)
-
-        # delete_sqs_message
-        close_pipeline_obj = ClosePipeline()
-        close_pipeline_obj.delete_sqs_message(queue_events)
 
 
 @mock_events
 def test_close_pipeline():
     with pytest.raises(Exception):
         close_pipeline_obj = ClosePipeline()
-        assert close_pipeline_obj.close_pipeline(None) is None
+        assert close_pipeline_obj.close_pipeline(None, None) is None
 
 
 @mock_sqs
@@ -115,10 +132,10 @@ def test_delete_sqs_message_assign_persistence_queue(event):
     close_pipeline_obj = ClosePipeline()
     close_pipeline_obj.put_message_sqs = mock.MagicMock()
     close_pipeline_obj.publish_message_to_sns = mock.MagicMock()
-    os.environ['SQS_PERSIST_HISTORICAL_ARN'] = "os_environ_SQS_PERSIST_HISTORICAL_ARN"
 
     # delete_sqs_message
-    close_pipeline_obj.delete_sqs_message(queue_events)
+    close_pipeline_obj.sqs = MockSQS()
+    close_pipeline_obj.delete_sqs_message(queue_events, None)
 
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
@@ -142,11 +159,12 @@ def test_delete_sqs_message_assign_historical_persistence_queue(event):
 
     # set up ClosePipeline instance for testing
     close_pipeline_obj = ClosePipeline()
+    close_pipeline_obj.sqs = MockSQS()
     close_pipeline_obj.publish_message_to_sns = mock.MagicMock()
     close_pipeline_obj.put_message_sqs = mock.MagicMock()
 
     # delete_sqs_message
-    close_pipeline_obj.delete_sqs_message(queue_events)
+    close_pipeline_obj.delete_sqs_message(queue_events, None)
 
     # verify the persistence queue name that was passed to self.put_message_sqs(batchId, persistenceQueue)
     close_pipeline_obj.put_message_sqs.assert_called_once_with(event[0]["batch_id"],
